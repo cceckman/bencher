@@ -17,9 +17,11 @@ import (
 var(
 	maybePrimes = []int {
 		2, 3, 11, 16,
+		/*
 		7919, 7920, 7979,
 		29443, 30253, 30257,
 		106877, 106878, 106879,
+		*/
 	}
 )
 
@@ -28,10 +30,14 @@ func main() {
 	cases := make(bencher.Cases)
 	for name, impl := range isprime.Implementations {
 		for _, n := range maybePrimes {
+			// In order to get the closure correct, close on the variable outside of 'for'
 			caseName := fmt.Sprintf("%s(%d)", name, n)
+			x := n
+			fn := impl
 			cases[caseName] = func() fmt.Stringer {
-				return strungBool(impl(n))
-			} // bencher.Runnable
+				result := fn(x)
+				return strungBool(result)
+			} // implement bencher.Runnable
 		} // for each input
 	} // for each implementation
 
