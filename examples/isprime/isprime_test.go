@@ -16,6 +16,10 @@ func TestIsPrime(t *testing.T) {
 		1181:  true,
 		1180:  false,
 		10000: false,
+		7919: true,
+		29443: true,
+		30253: true,
+		106877: true,
 	}
 
 	for in, expected := range cases {

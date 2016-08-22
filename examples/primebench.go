@@ -44,6 +44,10 @@ func main() {
 
 // Implement fmt.Stringer for bool, since Go doesn't on its own.
 type strungBool bool
-func (b strungBool) String() string { return fmt.Sprintf("%t", b) }
-
-
+func (b strungBool) String() string {
+	if bool(b) == true {
+		return "true"
+	} else {
+		return "false"
+	}
+}
