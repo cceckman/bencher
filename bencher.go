@@ -1,6 +1,6 @@
-// github.com/cceckman/bencher
-// All right reserved? Really? This is the internet and this is source.
-// Just give credit where it's due and it's all good.
+// Package bencher wraps `testing`'s benchmark functionality with output format
+// control. It can be used to quickly create benchmark grids.
+// See https://github.com/cceckman/bencher for more info.
 package bencher
 
 import(
