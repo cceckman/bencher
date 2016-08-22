@@ -25,21 +25,21 @@ type Cases map[string]Runnable
 
 // Run benchmarks on cases, and write the output to f using the specified outputMode.
 func Benchmark(cases Cases, w io.Writer, outputMode string) error {
+	// Set up output formatting; tab vs. comma-separated; or buffered and tabwriter-aligned
 	var sep string
+	var output io.Writer
 	switch(outputMode) {
-	case "tsv","col":
+	case "tsv":
 		sep = "\t"
+		output = w
 	case "csv":
 		sep = ","
+		output = w
+	case "col":
+		sep = "\t"
+		output = tabwriter.NewWriter(w, 0, 0, 1, ' ', tabwriter.AlignRight)
 	default:
 		return fmt.Errorf("Unknown output mode: '%s'", outputMode)
-	}
-	// Set up writer	
-	var output io.Writer
-	if outputMode == "col" {
-		output = tabwriter.NewWriter(w, 0, 8, 0, ' ', tabwriter.AlignRight)
-	} else {
-		output = w
 	}
 
 	// Write out column headers
@@ -47,10 +47,11 @@ func Benchmark(cases Cases, w io.Writer, outputMode string) error {
 			"Name",
 			"Result",
 			"Iterations",
-			"Total time (s)",
-			"Average time (ns)",
-			"Average memory alloced (B)",
-			"Average allocation operations",
+			"Total time",
+			"Avg time",
+			"Avg memory",
+			"Avg allocs",
+			"", // Elastic tabstops requires a trailing tab, which strings.Join doesn't provide.
 	}, sep))
 
 	for name, function := range cases {
@@ -68,13 +69,14 @@ func Benchmark(cases Cases, w io.Writer, outputMode string) error {
 			evalResult,
 			fmt.Sprint(perfResult.N),
 			fmt.Sprint(perfResult.T),
-			fmt.Sprint(perfResult.NsPerOp()),
-			fmt.Sprintf("%8d", perfResult.AllocedBytesPerOp()),
-			fmt.Sprintf("%8d", perfResult.AllocsPerOp()),
+			fmt.Sprintf("%d ns", perfResult.NsPerOp()),
+			fmt.Sprintf("%d B", perfResult.AllocedBytesPerOp()),
+			fmt.Sprintf("%d ops", perfResult.AllocsPerOp()),
+			"", // Elastic tabstops requires a trailing tab, which strings.Join doesn't provide.
 		}, sep))
 	}
 
-	// Flush tabwriter output
+	// Flush tabwriter output, if the output channel is a tabwriter.Writer
 	switch t := output.(type) {
 	case *tabwriter.Writer:
 		t.Flush()
