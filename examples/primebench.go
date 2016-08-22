@@ -37,13 +37,13 @@ func main() {
 
 	// cases has all our cases. Run all of them.
 	if err := bencher.AutoBenchmark(cases); err != nil {
-		fmt.Fprintf(os.Stderr, "%v", err)
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
 
 // Implement fmt.Stringer for bool, since Go doesn't on its own.
 type strungBool bool
-func (b strungBool) String() string { return fmt.Sprintf("%v", bool(b)) }
+func (b strungBool) String() string { return fmt.Sprintf("%t", b) }
 
 

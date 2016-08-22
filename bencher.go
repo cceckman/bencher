@@ -10,6 +10,7 @@ import(
 	"os"
 	"testing"
 	"strings"
+	"text/tabwriter"
 )
 
 var(
@@ -23,7 +24,7 @@ type Runnable func() fmt.Stringer
 type Cases map[string]Runnable
 
 // Run benchmarks on cases, and write the output to f using the specified outputMode.
-func Benchmark(cases Cases, output io.Writer, outputMode string) error {
+func Benchmark(cases Cases, w io.Writer, outputMode string) error {
 	var sep string
 	switch(outputMode) {
 	case "tsv","col":
@@ -33,12 +34,18 @@ func Benchmark(cases Cases, output io.Writer, outputMode string) error {
 	default:
 		return fmt.Errorf("Unknown output mode: '%s'", outputMode)
 	}
-	// Set up writer
-	// TODO
+	// Set up writer	
+	var output io.Writer
+	if outputMode == "col" {
+		output = tabwriter.NewWriter(w, 0, 8, 0, ' ', tabwriter.AlignRight)
+	} else {
+		output = w
+	}
 
 	// Write out column headers
 	fmt.Fprintln(output, strings.Join([]string{
 			"Name",
+			"Result",
 			"Iterations",
 			"Total time (s)",
 			"Average time (ns)",
@@ -58,12 +65,19 @@ func Benchmark(cases Cases, output io.Writer, outputMode string) error {
 		// Write output
 		fmt.Fprintln(output, strings.Join([]string{
 			name,
+			evalResult,
 			fmt.Sprint(perfResult.N),
 			fmt.Sprint(perfResult.T),
 			fmt.Sprint(perfResult.NsPerOp()),
 			fmt.Sprintf("%8d", perfResult.AllocedBytesPerOp()),
 			fmt.Sprintf("%8d", perfResult.AllocsPerOp()),
 		}, sep))
+	}
+
+	// Flush tabwriter output
+	switch t := output.(type) {
+	case *tabwriter.Writer:
+		t.Flush()
 	}
 
 	return nil
