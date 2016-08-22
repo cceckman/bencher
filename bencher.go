@@ -23,6 +23,9 @@ var(
 type Runnable func() fmt.Stringer
 type Cases map[string]Runnable
 
+// TODO: Provide settings through an interface (/ struct).
+// TODO: Allow turnup / turndown of parallelism of benchmark calls.
+
 // Run benchmarks on cases, and write the output to f using the specified outputMode.
 func Benchmark(cases Cases, w io.Writer, outputMode string) error {
 	// Set up output formatting; tab vs. comma-separated; or buffered and tabwriter-aligned
