@@ -51,9 +51,9 @@ func Benchmark(cases Cases, w io.Writer, outputMode string) error {
 			"Result",
 			"Iterations",
 			"Total time",
-			"Avg time",
-			"Avg memory",
-			"Avg allocs",
+			"Avg time (ns)",
+			"Avg memory (bytes)",
+			"Avg allocs (ops)",
 			"", // Elastic tabstops requires a trailing tab, which strings.Join doesn't provide.
 	}, sep))
 
@@ -72,9 +72,9 @@ func Benchmark(cases Cases, w io.Writer, outputMode string) error {
 			evalResult,
 			fmt.Sprint(perfResult.N),
 			fmt.Sprint(perfResult.T),
-			fmt.Sprintf("%d ns", perfResult.NsPerOp()),
-			fmt.Sprintf("%d B", perfResult.AllocedBytesPerOp()),
-			fmt.Sprintf("%d ops", perfResult.AllocsPerOp()),
+			fmt.Sprintf("%d", perfResult.NsPerOp()),
+			fmt.Sprintf("%d", perfResult.AllocedBytesPerOp()),
+			fmt.Sprintf("%d", perfResult.AllocsPerOp()),
 			"", // Elastic tabstops requires a trailing tab, which strings.Join doesn't provide.
 		}, sep))
 	}
