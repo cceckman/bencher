@@ -14,7 +14,7 @@ import(
 )
 
 var(
-	outputMode = flag.String("output-mode", "tsv",
+	outputMode = flag.String("output-mode", "col",
 		"Output format. Valid values are 'tsv' (columns separated by tabs)," +
 		"'csv' (columns separated by commas), or 'col' (columns aligned via the tabwriter package.)")
 )
